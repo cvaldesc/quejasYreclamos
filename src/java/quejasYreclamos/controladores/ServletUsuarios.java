@@ -7,6 +7,8 @@ package quejasYreclamos.controladores;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.PersistenceException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import quejasYreclamos.modelo.ConnectionModel;
 import quejasYreclamos.modelo.dao.UsuariosJpaController;
+import quejasYreclamos.modelo.dao.exceptions.IllegalOrphanException;
+import quejasYreclamos.modelo.dao.exceptions.NonexistentEntityException;
 import quejasYreclamos.modelo.entidades.Usuarios;
 
 /**
@@ -68,6 +72,20 @@ public class ServletUsuarios extends HttpServlet {
                 
                 request.getRequestDispatcher("/web/usuarios/crud_usuario.jsp?action=mos_agregar").forward(request, response);
         }
+        else if(action.equals("sol_buscar")){
+                request.setAttribute("action", "mos_buscar");
+                request.getRequestDispatcher("/web/usuarios/crud_usuario.jsp?action=mos_buscar").forward(request, response);
+        }
+         else if(action.equals("sol_editar")){
+                request.setAttribute("action", "mos_editar");
+                request.getRequestDispatcher("/web/usuarios/crud_usuario.jsp?action=mos_editar").forward(request, response);
+        }
+        else if(action.equals("buscar") == true){
+                searchUsuario(request, response);
+        }
+        else if (action.equals("editar") == true){
+                editUser(request, response);
+        }
     }
     public void saveUsuario(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
     	String id = request.getParameter("id");
@@ -95,7 +113,7 @@ public class ServletUsuarios extends HttpServlet {
                 request.setAttribute("next_Id", nextId);
                 request.setAttribute("action", "mos_agregar");
                 request.setAttribute("mensaje", "usuario "+ usuario.getUsuariosId()+" fue agregado con exito" );
-                 request.getRequestDispatcher("/web/usuarios/crud_usuario.jsp?action=sol_agregar").forward(request, response);
+                request.getRequestDispatcher("/web/usuarios/crud_usuario.jsp?action=sol_agregar").forward(request, response);
                 
                 //response.sendRedirect("/quejasYreclamos/web/usuarios/agregar.jsp?mensaje=OK, usuario fue agregado al sistema");
             } catch (Exception error) {
@@ -104,20 +122,104 @@ public class ServletUsuarios extends HttpServlet {
                 if(error instanceof PersistenceException){
                     request.setAttribute("mensaje", "problemas con el servidor de BD");
                     request.setAttribute("estilo", "error");
-                    request.setAttribute("url", "/ServletUsuarios");
+                    request.setAttribute("url", "ServletUsuarios");
                     request.setAttribute("nextAction", "sol_agregar");
                     error.printStackTrace();
                     request.getRequestDispatcher("/error.jsp").forward(request, response);
                 }else{
                     request.setAttribute("mensaje", "ocurrio un error desconocido");
                     request.setAttribute("estilo", "info");
-                    request.setAttribute("url", "/ServletUsuarios");
+                    request.setAttribute("url", "ServletUsuarios");
                     request.setAttribute("nextAction", "sol_agregar");
                     error.printStackTrace();
                     request.getRequestDispatcher("/error.jsp").forward(request, response);
                 }
             }
     }
+    
+    public void searchUsuario(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        
+            String id = request.getParameter("id");
+                    
+            ConnectionModel connection = ConnectionModel.getConnection();
+            UsuariosJpaController addUserBuscar = new UsuariosJpaController(connection.getFactoryConnection());
+           try {
+
+
+                Usuarios user = addUserBuscar.findUsuarios(Integer.valueOf(id).intValue());
+
+                request.setAttribute("user", user);
+                request.setAttribute("action", "mos_buscar");
+                request.setAttribute("mensaje", "usuario "+ user.getNombre()+" fue encontrado con exito" );
+                request.getRequestDispatcher("/web/usuarios/crud_usuario.jsp").forward(request, response);
+           
+           } catch (Exception error) {
+                request.setAttribute("mensaje", "usuario no existe");
+                request.setAttribute("estilo", "info");
+                request.setAttribute("url", "ServletUsuarios");
+                request.setAttribute("nextAction", "sol_buscar");
+                error.printStackTrace();
+                request.getRequestDispatcher("/error.jsp").forward(request, response);
+            }
+            
+    }
+    
+    public void editUser(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException{
+
+        String id = request.getParameter("id");
+        String cedula = request.getParameter("cedula");
+        String password = request.getParameter("password");
+        String nombre = request.getParameter("nombre");
+        String apellido = request.getParameter("apellido");
+        String email = request.getParameter("email");
+        String telefono = request.getParameter("telefono");
+
+        Usuarios user = new Usuarios();
+        user.setUsuariosId(Integer.valueOf(id));
+        user.setCedula(cedula);
+        user.setPassword(password);
+        user.setNombre(nombre);
+        user.setApellido(apellido);
+        user.setEmail(email);
+        user.setTelefono(telefono);
+
+        ConnectionModel connection = ConnectionModel.getConnection();
+        UsuariosJpaController addUser = new UsuariosJpaController(connection.getFactoryConnection()); 
+        
+        try {
+            addUser.edit(user);
+            
+            request.setAttribute("action", "mos_buscar");
+            request.setAttribute("user", user);
+            request.setAttribute("mensaje", "usuario "+ user.getUsuariosId()+" fue editado con exito" );
+            request.getRequestDispatcher("/web/usuarios/crud_usuario.jsp").forward(request, response);
+
+        } catch (NonexistentEntityException error) {
+            request.setAttribute("mensaje", "usuario no existe");
+            request.setAttribute("estilo", "info");
+            request.setAttribute("url", "ServletUsuarios");
+            request.setAttribute("nextAction", "sol_buscar");
+            error.printStackTrace();
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
+            
+        } catch(IllegalOrphanException error ){
+            request.setAttribute("mensaje", "nose pudo");
+            request.setAttribute("estilo", "info");
+            request.setAttribute("url", "ServletUsuarios");
+            request.setAttribute("nextAction", "sol_buscar");
+            error.printStackTrace();
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
+            
+        }catch (Exception error) {
+            request.setAttribute("mensaje", "ni idea que paso");
+            request.setAttribute("estilo", "info");
+            request.setAttribute("url", "ServletUsuarios");
+            request.setAttribute("nextAction", "sol_buscar");
+            error.printStackTrace();
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
+        }
+    }
+    
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -157,5 +259,7 @@ public class ServletUsuarios extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+   
 
 }

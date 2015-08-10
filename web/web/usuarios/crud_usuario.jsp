@@ -1,7 +1,12 @@
+<%@page import="quejasYreclamos.modelo.entidades.Usuarios"%>
 <%
     String  mensaje = (String) request.getAttribute("mensaje");
     String action = (String) request.getAttribute("action");
+    Usuarios user = (Usuarios) request.getAttribute("user");
+    Integer nextID = (Integer) request.getAttribute("next_Id");
+    nextID = (nextID != null) ? nextID.intValue() : 0 ;
 %>
+
 
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
@@ -39,34 +44,83 @@
 			<table>
 				<tr>
 					<td><label for="">ID</label></td>
-                                        <td><input type="number" name="id" value="<%= request.getAttribute("next_Id")%>" <%= (action.equals("mos_agregar") || action.equals("mos_editar"))?"readonly":"" %>/></td>
+                                        <td>
+                                            <input type="number" name="id" 
+                                            value="<%= ( user != null) ? user.getUsuariosId() : nextID %>" 
+                                            <%= (action.equals("mos_agregar") )?"readonly":"" %>
+                                            />
+                                        </td>
 				</tr>
 				<tr>
 					<td><label for="">Cedula</label></td>
-					<td><input type="text" name="cedula"/></td>
+					<td>
+                                            <input type="text" name="cedula" 
+                                                   value="<%= (user != null) ? user.getCedula() : "" %>"
+                                            <%= ( action.equals("mos_agregar") || action.equals("mos_buscar"))? "":"readonly" %>
+                                            />
+                                        </td>
 				</tr>
 				<tr>
 					<td><label for="">Password</label></td>
-					<td><input type="password" name="password"/></td>
+					<td>
+                                            <input type="password" name="password"
+                                            value="<%= (user != null) ? user.getPassword(): "" %>"       
+                                            <%= (action.equals("mos_agregar") || action.equals("mos_buscar"))?"":"readonly" %>
+                                            />
+                                        </td>
 				</tr>
 				<tr>
 					<td><label for="">Nombre</label></td>
-					<td><input type="text" name="nombre"/></td>
+					<td>
+                                            <input type="text" name="nombre" 
+                                                   value="<%= (user != null) ? user.getNombre() : "" %>"
+                                            <%= (action.equals("mos_agregar") || action.equals("mos_buscar"))?"":"readonly" %>
+                                            />
+                                        </td>
 				</tr>
 				<tr>
 					<td><label for="">Apellido</label></td>
-					<td><input type="text" name="apellido"/></td>
+					<td>
+                                            <input type="text" name="apellido"
+                                                   value="<%= (user != null) ? user.getApellido() : "" %>"
+                                            <%= (action.equals("mos_agregar") || action.equals("mos_buscar"))?"":"readonly" %>
+                                            />
+                                        </td>
 				</tr>
 				<tr>
 					<td><label for="">Email</label></td>
-					<td><input type="text" name="email"/></td>
+					<td>
+                                            <input type="text" name="email"
+                                                   value="<%= (user != null) ? user.getEmail() : "" %>"
+                                            <%= (action.equals("mos_agregar") || action.equals("mos_buscar"))?"":"readonly" %>
+                                            />
+                                        </td>
 				</tr>
 				<tr>
 					<td><label for="">Telefono</label></td>
-					<td><input type="text" name="telefono"/></td>
+					<td>
+                                            <input type="text" name="telefono"
+                                                   value="<%= (user != null) ? user.getTelefono() : "" %>"
+                                            <%= (action.equals("mos_agregar") || action.equals("mos_buscar"))?"":"readonly" %>
+                                            />
+                                        </td>
 				</tr>
 				<tr>
-					<td colspan="2"><input type="submit" name="action" value="guardar"><button type="reset">Restaurar</button></td>
+					<td colspan="2">
+                                            <input type="submit" name="action" value="guardar" 
+                                            <%= (action.equals("mos_agregar"))? "":"disabled" %>
+                                            />
+                                            <input type="submit" name="action" value="buscar"
+                                             <%= (action.equals("mos_editar") || action.equals("mos_buscar")  )? "":"disabled" %>         
+                                            />
+                                            <input type="submit" name="action" value="editar"
+                                            <%= (action.equals("mos_editar") || action.equals("mos_buscar")  )? "":"disabled" %>       
+                                            />
+                                            <input type="submit" name="action" value="eliminar"
+                                            <%= (action.equals("mos_eliminar")|| action.equals("mos_buscar")  )? "":"disabled" %>      
+                                            />
+                                            <button type="reset">Restaurar</button>
+                                        </td>
 				</tr>
 			</table>
 		</form>

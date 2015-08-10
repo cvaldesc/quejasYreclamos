@@ -12,9 +12,9 @@
 	<center>
 		<p>Menu para operaciones de usuarios</p>
 		<ul>
-                    <li><a href=" <%=request.getContextPath() %>/ServletUsuarios?action=sol_agregar">Agregar Usuario</a></li>
-			<li><a href="consultar.jsp">Consultar Usuario</a></li>
-			<li><a href="editar.jsp">Editar Usuario</a></li>
+                    <li><a href="<%=request.getContextPath() %>/ServletUsuarios?action=sol_agregar">Agregar Usuario</a></li>
+			<li><a href="<%=request.getContextPath() %>/ServletUsuarios?action=sol_buscar">Consultar Usuario</a></li>
+			<li><a href="<%=request.getContextPath() %>/ServletUsuarios?action=sol_editar">Editar Usuario</a></li>
 			<li><a href="eliminar.jsp">Eliminar Usuario</a></li>
 			<li><a href="listar.jsp">Listar Usuario</a></li>
 		</ul>

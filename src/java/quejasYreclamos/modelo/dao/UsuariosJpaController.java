@@ -13,6 +13,7 @@ import javax.persistence.criteria.Root;
 import quejasYreclamos.modelo.entidades.Respuestas;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -96,6 +97,11 @@ public class UsuariosJpaController implements Serializable {
             Collection<Respuestas> respuestasCollectionNew = usuarios.getRespuestasCollection();
             Collection<Peticiones> peticionesCollectionOld = persistentUsuarios.getPeticionesCollection();
             Collection<Peticiones> peticionesCollectionNew = usuarios.getPeticionesCollection();
+            respuestasCollectionOld = (respuestasCollectionOld == null) ? new LinkedList<Respuestas>() : respuestasCollectionOld ;
+            respuestasCollectionNew = (respuestasCollectionNew == null) ? new LinkedList<Respuestas>() : respuestasCollectionNew ;
+            peticionesCollectionOld =(peticionesCollectionOld == null) ? new LinkedList<Peticiones>() : peticionesCollectionOld ;
+            peticionesCollectionNew = (peticionesCollectionNew == null) ? new LinkedList<Peticiones>() : peticionesCollectionNew ;
+            
             List<String> illegalOrphanMessages = null;
             for (Respuestas respuestasCollectionOldRespuestas : respuestasCollectionOld) {
                 if (!respuestasCollectionNew.contains(respuestasCollectionOldRespuestas)) {
@@ -260,5 +266,7 @@ public class UsuariosJpaController implements Serializable {
         Integer result = (Integer) consulta.getSingleResult();
         return result.intValue()+1;
     }
-    
+   /* public int GetUserFind(Integer iD){
+        
+    }*/
 }
