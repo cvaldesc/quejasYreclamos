@@ -266,7 +266,12 @@ public class UsuariosJpaController implements Serializable {
         Integer result = (Integer) consulta.getSingleResult();
         return result.intValue()+1;
     }
-   /* public int GetUserFind(Integer iD){
-        
-    }*/
+    public int lastId(){
+        String select = "SELECT LAST INSERT_ID() FROM Usuarios u WHERE u.usuariosId";
+        Query consulta = getEntityManager().createQuery(select);
+        Integer result = (Integer) consulta.getSingleResult();
+        return result.intValue()+1;
+    }
+
+
 }

@@ -5,6 +5,7 @@
 --%>
 <%
     String mensaje = (String) request.getAttribute("mensaje");
+    String imprimir = (String) request.getAttribute("impirmir");
     String estilo = (String) request.getAttribute("estilo");
     String url = (String) request.getAttribute("url");
     String action = (String) request.getAttribute("nextAction");
@@ -48,6 +49,7 @@
             <p>
                 <a href="<%= request.getContextPath() %>/<%=url%>?action=<%= action %>">sigue buscando en Home</a>
             </p>
+     
         </center>
     </body>
 </html>

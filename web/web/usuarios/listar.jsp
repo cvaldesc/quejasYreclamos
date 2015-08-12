@@ -7,7 +7,7 @@
 <%@page import="quejasYreclamos.modelo.entidades.Usuarios"%>
 <%@page import="java.util.List"%>
 <%
-    String mensaje = (String) request.getParameter("mensaje");
+    String  mensaje = (String) request.getAttribute("mensaje");
     List<Usuarios> users = (List<Usuarios>) request.getAttribute("Listados_Usuarios");
 %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -83,7 +83,7 @@
                 %>
             </tbody>
             <tfoot>
-               
+               <%= mensaje != null ? mensaje : "nada"%>
             </tfoot>
         </table>
     </center>

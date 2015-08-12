@@ -4,7 +4,9 @@
     String action = (String) request.getAttribute("action");
     Usuarios user = (Usuarios) request.getAttribute("user");
     Integer nextID = (Integer) request.getAttribute("next_Id");
+    
     nextID = (nextID != null) ? nextID.intValue() : 0 ;
+    
 %>
 
 

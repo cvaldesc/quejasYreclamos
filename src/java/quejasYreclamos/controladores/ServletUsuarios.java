@@ -6,6 +6,7 @@
 package quejasYreclamos.controladores;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import javax.persistence.PersistenceException;
 import javax.servlet.ServletException;
@@ -43,11 +44,22 @@ public class ServletUsuarios extends HttpServlet {
         try {
             processAction(request,response);
         } catch (Exception error) {
+            
             error.printStackTrace();
             request.getRequestDispatcher("/error.jsp").forward(request, response);
         }
         
-        
+        /*try (PrintWriter out = response.getWriter()) {
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet ServletUsuarios</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet ServletUsuarios at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }*/
     }
     public void processAction(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, Exception{
     	String action = request.getParameter("action");
@@ -56,15 +68,35 @@ public class ServletUsuarios extends HttpServlet {
     		saveUsuario(request,response);
     	}
         else if(action.equals("sol_agregar")){
+            ConnectionModel connection = ConnectionModel.getConnection();
+            UsuariosJpaController addUserAgregar = new UsuariosJpaController(connection.getFactoryConnection());
            
-                ConnectionModel connection = ConnectionModel.getConnection();
-                UsuariosJpaController addUserAgregar = new UsuariosJpaController(connection.getFactoryConnection());
-                int nextId = addUserAgregar.nextId();
+            int Id = addUserAgregar.getUsuariosCount();
+            int nextId;
+            if(Id != 0){
+                nextId = addUserAgregar.nextId();
                 System.err.println("ID:"+ nextId);
-                request.setAttribute("next_Id", nextId);
+                request.setAttribute("next_Id", nextId);  
                 request.setAttribute("action", "mos_agregar");
-                
                 request.getRequestDispatcher("/web/usuarios/crud_usuario.jsp?action=mos_agregar").forward(request, response);
+            }else{
+               nextId = addUserAgregar.lastId();
+                request.setAttribute("next_Id", nextId);  
+                request.setAttribute("action", "mos_agregar");
+                request.getRequestDispatcher("/web/usuarios/crud_usuario.jsp?action=mos_agregar").forward(request, response);
+            }
+           
+                  /*  int nextId = addUserAgregar.nextId();
+                    System.err.println("ID:"+ nextId);
+                    request.setAttribute("next_Id", nextId);  
+                    request.setAttribute("action", "mos_agregar");
+                    request.getRequestDispatcher("/web/usuarios/crud_usuario.jsp?action=mos_agregar").forward(request, response);
+              */
+               
+       
+
+            
+                
         }
         else if(action.equals("sol_buscar")){
                 request.setAttribute("action", "mos_buscar");
